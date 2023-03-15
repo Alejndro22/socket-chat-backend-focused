@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import { dbConnection } from '../database/config.js';
 import {
   userRouter,
@@ -10,11 +12,14 @@ import {
   productsRouter,
   uploadsRouter,
 } from '../routes/index.js';
+import { socketController } from '../sockets/socket-controller.js';
 
-class Server {
+class ServerApp {
   constructor() {
     this.app = express();
     this.port = process.env.PORT || 3000;
+    this.httpServer = createServer(this.app);
+    this.io = new Server(this.httpServer);
 
     this.paths = {
       auth: '/api/auth',
@@ -33,6 +38,9 @@ class Server {
 
     // Rutas de mi app
     this.routes();
+
+    // Sockets
+    this.sockets();
   }
 
   async connectDB() {
@@ -68,11 +76,15 @@ class Server {
     this.app.use(this.paths.users, userRouter);
   }
 
+  sockets() {
+    this.io.on('connection', socketController);
+  }
+
   listen() {
-    this.app.listen(this.port, () => {
+    this.httpServer.listen(this.port, () => {
       console.log('Server running on port', this.port);
     });
   }
 }
 
-export default Server;
+export default ServerApp;
