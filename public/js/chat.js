@@ -12,6 +12,7 @@ const validateJWT = async () => {
     throw new Error('No token in server');
   }
 
+  // send token
   const resp = await fetch(url, {
     headers: { 'x-token': token },
   });
@@ -19,6 +20,18 @@ const validateJWT = async () => {
   const { user: userDB, token: tokenDB } = await resp.json();
   localStorage.setItem('token', tokenDB);
   user = userDB;
+  document.title = user.name;
+
+  await connectSocket();
+};
+
+const connectSocket = async () => {
+  // send token to socket connection (located in handshake)
+  const socket = io({
+    extraHeaders: {
+      'x-token': localStorage.getItem('token'),
+    },
+  });
 };
 
 const main = async () => {
@@ -26,5 +39,3 @@ const main = async () => {
 };
 
 main();
-
-// const socket = io();
