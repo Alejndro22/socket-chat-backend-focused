@@ -5,12 +5,13 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { dbConnection } from '../database/config.js';
 import {
-  userRouter,
   authRouter,
   categoriesRouter,
+  chatRouter,
   searchRouter,
   productsRouter,
   uploadsRouter,
+  userRouter,
 } from '../routes/index.js';
 import { socketController } from '../sockets/socket-controller.js';
 
@@ -24,6 +25,7 @@ class ServerApp {
     this.paths = {
       auth: '/api/auth',
       categories: '/api/categories',
+      chat: '/api/chat',
       products: '/api/products',
       search: '/api/search',
       uploads: '/api/uploads',
@@ -70,6 +72,7 @@ class ServerApp {
   routes() {
     this.app.use(this.paths.auth, authRouter);
     this.app.use(this.paths.categories, categoriesRouter);
+    this.app.use(this.paths.chat, chatRouter);
     this.app.use(this.paths.products, productsRouter);
     this.app.use(this.paths.search, searchRouter);
     this.app.use(this.paths.uploads, uploadsRouter);
