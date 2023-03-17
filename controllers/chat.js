@@ -24,9 +24,6 @@ const sendMessage = async (req = request, res = response) => {
   const { message, global, unique_receiver } = req.body;
   const sender = req.user._id;
 
-  console.log(global);
-  console.log(unique_receiver);
-
   let msg;
   if (global) {
     msg = new Chat({ message, sender, global });
