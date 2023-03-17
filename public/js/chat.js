@@ -3,6 +3,13 @@ let user = null;
 let socket = null;
 const url = `${window.location.origin}/api/auth/`;
 
+// HTML refs
+const txtUid = document.querySelector('#txtUid');
+const txtMsg = document.querySelector('#txtMsg');
+const ulUsers = document.querySelector('#ulUsers');
+const ulMsgs = document.querySelector('#ulMsgs');
+const btnLogout = document.querySelector('#btnLogout');
+
 // validate token in localStorage
 const validateJWT = async () => {
   const token = localStorage.getItem('token') || '';
@@ -27,10 +34,31 @@ const validateJWT = async () => {
 
 const connectSocket = async () => {
   // send token to socket connection (located in handshake)
-  const socket = io({
+  socket = io({
     extraHeaders: {
       'x-token': localStorage.getItem('token'),
     },
+  });
+
+  // as code above is sync, i can create events when it triggers
+  socket.on('connect', () => {
+    console.log('sockets online');
+  });
+
+  socket.on('disconnect', () => {
+    console.log('sockets offline');
+  });
+
+  socket.on('receibe-messages', () => {
+    // TODO
+  });
+
+  socket.on('active-users', () => {
+    // TODO
+  });
+
+  socket.on('private-messages', () => {
+    // TODO
   });
 };
 
