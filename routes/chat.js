@@ -20,6 +20,7 @@ router.post(
   [
     validateJWT,
     check('unique_receiver', 'This is not a valid id').optional().isMongoId(),
+    check('message', 'You should send a message').notEmpty(),
     validateFields,
   ],
   sendMessage

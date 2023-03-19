@@ -13,6 +13,7 @@ const getMessages = async (req = request, res = response) => {
   })
     .skip(from)
     .limit(limit)
+    .sort({ $natural: -1 })
     .populate('sender', 'name');
 
   res.json({

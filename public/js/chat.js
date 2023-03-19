@@ -49,16 +49,16 @@ const connectSocket = async () => {
     console.log('sockets offline');
   });
 
-  socket.on('receibe-messages', () => {
-    // TODO
+  socket.on('receibe-messages', (payload) => {
+    displayMessages(payload);
   });
 
   socket.on('active-users', (payload) => {
     displayUsers(payload);
   });
 
-  socket.on('private-messages', () => {
-    // TODO
+  socket.on('private-messages', (payload) => {
+    console.log(payload);
   });
 };
 
@@ -77,6 +77,34 @@ const displayUsers = (users = []) => {
 
   ulUsers.innerHTML = usersHTML;
 };
+
+const displayMessages = ({ messages } = []) => {
+  let messagesHTML = '';
+  messages.forEach(({ message, sender }) => {
+    messagesHTML += `
+      <li>
+        <p>
+          <span class="text-primary">${sender.name}</span>
+          <span>${message}</span>
+        </p>
+      </li>
+    `;
+  });
+
+  ulMsgs.innerHTML = messagesHTML;
+};
+
+txtMsg.addEventListener('keyup', ({ keyCode }) => {
+  const msg = txtMsg.value;
+  const uid = txtUid.value;
+  const token = localStorage.getItem('token');
+
+  if (keyCode !== 13) return;
+  if (msg.length === 0) return;
+  socket.emit('send-msg', { baseUrl: window.location.origin, msg, uid, token });
+
+  txtMsg.value = '';
+});
 
 const main = async () => {
   await validateJWT();
