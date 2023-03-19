@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { User } from '../models/index.js';
 
 const generateJWT = (uid = '') => {
   return new Promise((resolve, reject) => {
@@ -22,4 +23,26 @@ const generateJWT = (uid = '') => {
   });
 };
 
-export { generateJWT };
+const checkJWT = async (token = '') => {
+  try {
+    if (token.length < 10) {
+      return null;
+    }
+
+    const { uid } = jwt.verify(token, process.env.SECRETORPUBLICKEY);
+
+    const user = await User.findById(uid);
+
+    if (user) {
+      if (user.state) {
+        return user;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  } catch (error) {}
+};
+
+export { generateJWT, checkJWT };
